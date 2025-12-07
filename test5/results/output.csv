@@ -1,0 +1,5 @@
+company_id,employee_id,employee.name,employee.role,id,company.name,company.role,profit
+10,1,Lola,Engineer,10,Thales,Defense,3B
+20,2,Max,Analyst,20,BNP,Bank,1B
+10,3,Pauline,Engineer,10,Thales,Defense,3B
+
