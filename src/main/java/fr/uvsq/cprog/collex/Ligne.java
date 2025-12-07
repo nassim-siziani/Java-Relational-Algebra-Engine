@@ -4,58 +4,52 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Représente une ligne d'une table, sous forme d'association attribut → valeur.
+ * Représente une ligne d'une table :
+ * une association attribut -> valeur.
  */
 public class Ligne {
 
-  /** Dictionnaire des paires attribut/valeur. */
-  private final Map<String, String> attributs;
+  /** Stockage des valeurs sous forme clé-valeur. */
+  private final Map<String, String> valeurs;
 
-  /** Constructeur vide : crée une ligne sans valeurs initiales. */
+  /** Constructeur par défaut. */
   public Ligne() {
-    this.attributs = new HashMap<>();
+    this.valeurs = new HashMap<>();
   }
 
   /**
-   * Constructeur à partir d'une map existante.
+   * Définit la valeur d'un attribut.
+   * Les noms d'attributs sont normalisés en minuscules.
    *
-   * @param attributs map contenant les paires attribut/valeur initiales
+   * @param attribut nom de l'attribut
+   * @param valeur   valeur associée
    */
-  public Ligne(Map<String, String> attributs) {
-    this.attributs = new HashMap<>(attributs);
+  public void setValeur(String attribut, String valeur) {
+    if (attribut == null) {
+      throw new IllegalArgumentException("Nom d'attribut null interdit");
+    }
+    valeurs.put(attribut.toLowerCase(), valeur);
   }
 
   /**
-   * Définit la valeur d'un attribut dans cette ligne.
+   * Récupère la valeur associée à un attribut (normalisation en minuscules).
    *
-   * @param nomAttribut nom de l'attribut
-   * @param valeur valeur associée à cet attribut
+   * @param attribut nom de l'attribut
+   * @return valeur ou null si l'attribut n'existe pas
    */
-  public void setValeur(String nomAttribut, String valeur) {
-    attributs.put(nomAttribut, valeur);
+  public String getValeur(String attribut) {
+    if (attribut == null) {
+      return null;
+    }
+    return valeurs.get(attribut.toLowerCase());
   }
 
   /**
-   * Renvoie la valeur associée à un attribut.
+   * Retourne la map complète des attributs/valeurs.
    *
-   * @param nomAttribut nom de l'attribut
-   * @return la valeur correspondante, ou null si absente
-   */
-  public String getValeur(String nomAttribut) {
-    return attributs.get(nomAttribut);
-  }
-
-  /**
-   * Renvoie la map complète d'attributs.
-   *
-   * @return la map des attributs de cette ligne
+   * @return map des valeurs
    */
   public Map<String, String> getAttributs() {
-    return attributs;
+    return valeurs;
   }
-
-  @Override
-  public String toString() {
-    return attributs.toString();
-  }
-}   
+}

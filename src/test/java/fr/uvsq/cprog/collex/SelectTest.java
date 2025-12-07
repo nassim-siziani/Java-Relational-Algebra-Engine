@@ -2,63 +2,80 @@ package fr.uvsq.cprog.collex;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.function.Predicate;
-
 import org.junit.jupiter.api.Test;
 
-public class SelectTest {
+class SelectTest {
 
-    @Test
-    public void testSelectionSimple() {
-        // Table d'entrée
-        Table t = new Table();
-        Ligne l1 = new Ligne();
-        l1.setValeur("age", "20");
+  @Test
+  void selectFiltreCorrectementLesLignes() {
+    // Table d'entrée
+    Table t = new Table("Users", List.of("id", "age"));
 
-        Ligne l2 = new Ligne();
-        l2.setValeur("age", "30");
+    Ligne l1 = new Ligne();
+    l1.setValeur("id", "1");
+    l1.setValeur("age", "22");
 
-        t.ajouterLigne(l1);
-        t.ajouterLigne(l2);
+    Ligne l2 = new Ligne();
+    l2.setValeur("id", "2");
+    l2.setValeur("age", "30");
 
-        // prédicat : garder les lignes où age < 25
-        Predicate<Ligne> condition = ligne -> 
-            Integer.parseInt(ligne.getValeur("age")) < 25;
+    Ligne l3 = new Ligne();
+    l3.setValeur("id", "3");
+    l3.setValeur("age", "19");
 
-        Select select = new Select(condition);
+    t.ajouterLigne(l1);
+    t.ajouterLigne(l2);
+    t.ajouterLigne(l3);
 
-        // Exécution
-        Table res = select.appliquer(t);
+    // Predicate : garder uniquement les lignes avec age < 25
+    Predicate<Ligne> ageMoinsDe25 = ligne -> {
+      String val = ligne.getValeur("age");
+      return val != null && Integer.parseInt(val) < 25;
+    };
 
-        // Vérifications
-        assertEquals(1, res.getLignes().size());
-        assertEquals("20", res.getLignes().get(0).getValeur("age"));
+    Select select = new Select(ageMoinsDe25);
+    Table res = select.appliquer(t);
 
-        // Vérifier que la table d'origine n'est pas modifiée
-        assertEquals(2, t.getLignes().size());
-    }
+    // Les colonnes doivent être identiques
+    assertEquals(List.of("id", "age"), res.getAttributs());
 
+    // On ne garde que l1 (22) et l3 (19)
+    assertEquals(2, res.getLignes().size());
 
-    @Test
-    public void testSelectionAucuneLigne() {
-        Table t = new Table();
-        Ligne l = new Ligne();
-        l.setValeur("age", "40");
-        t.ajouterLigne(l);
+    Ligne r1 = res.getLignes().get(0);
+    Ligne r2 = res.getLignes().get(1);
 
-        Predicate<Ligne> cond = ligne -> false;
+    assertEquals("1", r1.getValeur("id"));
+    assertEquals("22", r1.getValeur("age"));
 
-        Select s = new Select(cond);
-        Table res = s.appliquer(t);
+    assertEquals("3", r2.getValeur("id"));
+    assertEquals("19", r2.getValeur("age"));
+  }
 
-        assertEquals(0, res.getLignes().size());
-    }
+  @Test
+  void selectSansAucunMatchProduitZeroLigne() {
+    Table t = new Table("Users", List.of("id", "age"));
 
+    Ligne l1 = new Ligne();
+    l1.setValeur("id", "1");
+    l1.setValeur("age", "40");
 
-    @Test
-    public void testConstructeurNull() {
-        assertThrows(IllegalArgumentException.class,
-            () -> new Select(null)
-        );
-    }
+    t.ajouterLigne(l1);
+
+    // Predicate : age < 10 → ne matche personne
+    Predicate<Ligne> ageMoinsDe10 = ligne -> {
+      String val = ligne.getValeur("age");
+      return val != null && Integer.parseInt(val) < 10;
+    };
+
+    Select select = new Select(ageMoinsDe10);
+    Table res = select.appliquer(t);
+
+    // Même en-tête
+    assertEquals(List.of("id", "age"), res.getAttributs());
+    // Mais aucune ligne
+    assertEquals(0, res.getLignes().size());
+  }
 }

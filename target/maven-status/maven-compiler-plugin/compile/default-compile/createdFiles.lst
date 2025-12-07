@@ -1,4 +1,10 @@
+fr/uvsq/cprog/collex/Project.class
 fr/uvsq/cprog/collex/Ligne.class
+fr/uvsq/cprog/collex/AlgTranslator.class
+fr/uvsq/cprog/collex/JsonQueryExecutor.class
+fr/uvsq/cprog/collex/Scan.class
+fr/uvsq/cprog/collex/Main.class
+fr/uvsq/cprog/collex/Join.class
 fr/uvsq/cprog/collex/Table.class
 fr/uvsq/cprog/collex/Operation.class
 fr/uvsq/cprog/collex/Select.class

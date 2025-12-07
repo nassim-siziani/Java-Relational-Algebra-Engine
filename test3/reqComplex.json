@@ -1,0 +1,39 @@
+{
+  "tables": {
+    "users": "users.csv",
+    "orders": "orders.csv"
+  },
+  "plan": {
+    "type": "PROJECT",
+    "columns": [
+      "name",
+      "city",
+      "amount"
+    ],
+    "input": {
+      "type": "JOIN",
+      "left": {
+        "type": "PROJECT",
+        "columns": [
+          "id",
+          "name",
+          "city"
+        ],
+        "input": {
+          "type": "SELECT",
+          "predicate": "age \u003c 28",
+          "input": {
+            "type": "SCAN",
+            "table": "users"
+          }
+        }
+      },
+      "right": {
+        "type": "SCAN",
+        "table": "orders"
+      },
+      "onLeft": "id",
+      "onRight": "user_id"
+    }
+  }
+}

@@ -1,54 +1,52 @@
 package fr.uvsq.cprog.collex;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
+
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import org.junit.jupiter.api.Test;
 
-/**
- * Tests unitaires pour la classe Table.
- */
-public class TableTest {
+class TableTest {
 
-  /** Vérifie l’ajout de lignes et la récupération d’attributs. */
   @Test
-  public void testAjoutEtLecture() {
-    Table table = new Table();
-    table.getAttributs().addAll(List.of("id", "name"));
+  void attributsSontNormalisesEnMinuscules() {
+    Table t = new Table("Users", List.of("ID", "Name", "Age"));
 
-    Ligne ligne1 = new Ligne();
-    ligne1.setValeur("id", "1");
-    ligne1.setValeur("name", "Alice");
-
-    table.ajouterLigne(ligne1);
-
-    assertEquals(1, table.getLignes().size());
-    assertEquals("Alice", table.getLignes().get(0).getValeur("name"));
+    assertEquals(List.of("id", "name", "age"), t.getAttributs(),
+        "Les attributs doivent être stockés en minuscules");
   }
 
-  /** Vérifie la création de table avec liste d’attributs. */
   @Test
-  public void testConstructeurAvecAttributs() {
-    List<String> attributs = List.of("id", "age");
-    Table table = new Table(attributs);
-    assertEquals(attributs, table.getAttributs());
-    assertTrue(table.getLignes().isEmpty());
+  void contientAttributIgnoreLaCasse() {
+    Table t = new Table("Users", List.of("Id", "Name"));
+
+    assertTrue(t.contientAttribut("id"));
+    assertTrue(t.contientAttribut("ID"));
+    assertTrue(t.contientAttribut("Id"));
+    assertFalse(t.contientAttribut("age"));
   }
 
-  /** Vérifie le format du toString(). */
   @Test
-  public void testToString() {
-    Table table = new Table();
-    table.getAttributs().addAll(List.of("id", "name"));
+  void ajouterLigneEtToStringProduisentUnCsvPropre() {
+    Table t = new Table("Users", List.of("id", "name"));
 
-    Map<String, String> map = new HashMap<>();
-    map.put("id", "1");
-    map.put("name", "Bob");
-    table.ajouterLigne(new Ligne(map));
+    Ligne l1 = new Ligne();
+    l1.setValeur("id", "1");
+    l1.setValeur("name", "Alice");
 
-    String texte = table.toString();
-    assertTrue(texte.contains("id"));
-    assertTrue(texte.contains("Bob"));
+    Ligne l2 = new Ligne();
+    l2.setValeur("id", "2");
+    l2.setValeur("name", "Bob");
+
+    t.ajouterLigne(l1);
+    t.ajouterLigne(l2);
+
+    String csv = t.toString().trim(); // pour ignorer un éventuel \n final
+
+    String attendu = """
+        id,name
+        1,Alice
+        2,Bob""";
+
+    assertEquals(attendu, csv);
   }
 }

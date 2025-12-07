@@ -7,38 +7,36 @@ import java.util.function.Predicate;
  * Filtre une table en gardant uniquement les lignes
  * qui vérifient un prédicat.
  */
-public class Select implements Operation {
-  final public Predicate<Ligne> condition;
+public final class Select implements Operation {
+
+  /** Condition appliquée à chaque ligne. */
+  private final Predicate<Ligne> condition;
 
   /**
-     * Construit une opération de sélection.
-     *
-     * @param condition prédicat appliqué à chaque ligne
-     */
-  Select(Predicate<Ligne> condition) {
-    if(condition == null) {
-      throw new IllegalArgumentException("Condition null.");
+   * Construit une opération de sélection.
+   *
+   * @param condition prédicat appliqué à chaque ligne
+   */
+  public Select(Predicate<Ligne> condition) {
+    if (condition == null) {
+      throw new IllegalArgumentException("La condition de SELECT ne peut pas être nulle.");
     }
     this.condition = condition;
   }
 
-  /**
-     * Applique le SELECT : garde les lignes qui satisfont la condition.
-     *
-     * @param tables une table d'entrée (une seule)
-     * @return une nouvelle table filtrée
-     */
   @Override
   public Table appliquer(Table... tables) {
     if (tables == null || tables.length != 1) {
-      throw new IllegalArgumentException("Select prend exactement une table.");
+      throw new IllegalArgumentException(
+          "SELECT doit recevoir exactement une table en entrée.");
     }
 
-    Table resultat = new Table(tables[0].getAttributs());
+    Table entree = tables[0];
+    Table resultat = new Table(entree.getAttributs());
 
-    tables[0].getLignes().stream()
-      .filter(condition)
-      .forEach(resultat::ajouterLigne);
+    entree.getLignes().stream()
+        .filter(condition)
+        .forEach(resultat::ajouterLigne);
 
     return resultat;
   }

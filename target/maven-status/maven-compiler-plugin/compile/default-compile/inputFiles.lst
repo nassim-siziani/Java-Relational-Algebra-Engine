@@ -1,4 +1,10 @@
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/AlgTranslator.java
 /home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Select.java
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Main.java
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/JsonQueryExecutor.java
 /home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Operation.java
 /home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Table.java
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Join.java
 /home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Ligne.java
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Scan.java
+/home/nassim/td4-uvsq22505602/src/main/java/fr/uvsq/cprog/collex/Project.java

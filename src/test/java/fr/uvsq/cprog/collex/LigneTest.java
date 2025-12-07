@@ -1,42 +1,57 @@
 package fr.uvsq.cprog.collex;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.Test;
-import java.util.Map;
-import java.util.HashMap;
 
-/**
- * Test unitaire de la classe Ligne.
- */
-public class LigneTest {  
-  /**
-   * Vérifie la création et la lecture de valeurs.
-   */
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+class LigneTest {
+
   @Test
-  public void testSetEtGetValeur() {
-      Ligne ligne = new Ligne();
-      ligne.setValeur("id", "1");
-      ligne.setValeur("name", "Alice");  
-      assertEquals("1", ligne.getValeur("id"));
-      assertEquals("Alice", ligne.getValeur("name"));
-  }  
-  /**
-   * Vérifie la construction d'une ligne à partir d'une map existante.
-   */
+  void setEtGetValeurFonctionnentCorrectement() {
+    Ligne l = new Ligne();
+
+    l.setValeur("id", "1");
+    l.setValeur("name", "Alice");
+
+    assertEquals("1", l.getValeur("id"));
+    assertEquals("Alice", l.getValeur("name"));
+  }
+
   @Test
-  public void testConstructeurAvecMap() {
-      Map<String, String> data = new HashMap<>();
-      data.put("age", "22");
-      Ligne ligne = new Ligne(data);  
-      assertEquals("22", ligne.getValeur("age"));
-  }  
-  /**
-   * Vérifie la méthode toString.
-   */
+  void getValeurRenvoieNullSiAttributAbsent() {
+    Ligne l = new Ligne();
+
+    l.setValeur("id", "1");
+
+    assertNull(l.getValeur("age"),
+        "Un attribut non défini doit retourner null");
+  }
+
   @Test
-  public void testToString() {
-      Ligne ligne = new Ligne();
-      ligne.setValeur("id", "1");
-      assertTrue(ligne.toString().contains("id=1"));
+  void getAttributsRetourneLaMapDesColonnes() {
+    Ligne l = new Ligne();
+
+    l.setValeur("id", "1");
+    l.setValeur("name", "Bob");
+
+    Map<String, String> attrs = l.getAttributs();
+
+    assertTrue(attrs.containsKey("id"));
+    assertTrue(attrs.containsKey("name"));
+    assertEquals("1", attrs.get("id"));
+    assertEquals("Bob", attrs.get("name"));
+    assertEquals(2, attrs.size());
+  }
+
+  @Test
+  void ecrasementDeValeurFonctionne() {
+    Ligne l = new Ligne();
+
+    l.setValeur("id", "1");
+    l.setValeur("id", "2");
+
+    assertEquals("2", l.getValeur("id"),
+        "La dernière valeur affectée doit écraser la précédente");
   }
 }
