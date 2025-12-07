@@ -232,25 +232,100 @@ R = PROJ R2 name amount
 
 == À compléter ici:
 
-> Quelles bibliothèques ont été utilisées et pourquoi ?
+Quelles bibliothèques ont été utilisées et pourquoi ?
 
-> Décrire les relations d'héritage ou autres entre vos classes
+  Gson : lecture/écriture des fichiers JSON de requêtes et construction des objets de plan.
 
-> Quel est le rôle des différentes classes ?
+  JUnit 5 : tests unitaires.
 
-> Pourquoi Json est bien/pas bien adapté pour l'interprétation un plan d'execution ?
+  JaCoCo : mesure de la couverture de code.
 
-> Quelles classes avez vous utilisées pour la lecture d'un Json ?
+  Checkstyle (Google) : respect des règles de style imposées par le projet.
 
-> Comment consulter le rapport de couverture de code par les tests ?
+Maven + Maven Wrapper : build reproductible et exécution automatique des plugins.
 
-> Quels avantages apporte une approche de programmation non impérative, mais fonctionnelle, pour l'évaluation des requêtes dans votre projet ?
+Décrire les relations d'héritage ou autres entre vos classes
 
-> Y a-t-il des bibliothèques Java qui permettraient de lire un fichier CSV et de l'instancier comme une collection ?
+  Une interface Operation définit le contrat commun des opérateurs.
 
-> Comment avez-vous géré la variabilité du nombre de colonnes dans une table représentée dans une collection ?
+  Scan, Select, Project, Join implémentent Operation.
 
-> Quelles évolutions peut-on envisager ?
+  Table agrège une liste de Ligne et une liste d’attributs.
+
+  Ligne encapsule les valeurs d’une ligne sous forme de mapping attribut → valeur.
+
+  JsonQueryExecutor orchestre l’évaluation récursive du plan JSON.
+
+  AlgTranslator traduit un script .alg en plan JSON.
+
+Quel est le rôle des différentes classes ?
+
+  Table : représentation en mémoire d’une relation (nom, colonnes, lignes).
+
+  Ligne : représentation d’un tuple, accès aux valeurs par attribut.
+
+  Scan : charge un CSV en Table.
+
+  Select : filtre les lignes selon un prédicat simple.
+
+  Project : conserve un sous-ensemble de colonnes.
+
+  Join : réalise une équi-jointure et gère les attributs ambigus en préfixant à la sortie du JOIN.
+
+  JsonQueryExecutor : lit une requête JSON, instancie les opérations et exécute le plan de manière fonctionnelle/récursive.
+
+  AlgTranslator : parse le .alg et génère le JSON correspondant.
+
+  Main : détecte l’extension, déclenche traduction (.alg) ou exécution (.json).
+
+Pourquoi Json est bien/pas bien adapté pour l'interprétation un plan d'execution ?
+
+  Bien adapté : format structuré, lisible, standard, facile à parser, parfait pour représenter un arbre d’opérateurs imbriqués.
+
+  Limites : verbeux, peu ergonomique à écrire à la main, validation sémantique reportée au runtime.
+
+Quelles classes avez vous utilisées pour la lecture d'un Json ?
+
+  Gson, principalement via Gson, JsonObject, JsonArray, JsonParser.
+
+Comment consulter le rapport de couverture de code par les tests ?
+
+  Après mvn test ou mvn package, ouvrir :
+  target/site/jacoco/index.html
+
+Quels avantages apporte une approche de programmation non impérative, mais fonctionnelle, pour l'évaluation des requêtes dans votre projet ?
+
+  Code plus déclaratif et proche de l’algèbre relationnelle.
+
+  Opérateurs composables (chaînage naturel Scan → Select → Project → Join).
+
+  Moins d’état mutable, moins d’effets de bord, tests plus simples.
+
+  Évaluation du plan comme une fonction transformant une ou plusieurs tables en une table.
+
+Y a-t-il des bibliothèques Java qui permettraient de lire un fichier CSV et de l'instancier comme une collection ?
+
+  Oui, par exemple : OpenCSV, Apache Commons CSV, ou Jackson CSV.
+
+Comment avez-vous géré la variabilité du nombre de colonnes dans une table représentée dans une collection ?
+
+  Les colonnes sont stockées dans une liste dynamique d’attributs dans Table.
+
+  Une Ligne stocke ses valeurs dans une structure dictionnaire (attribut → valeur).
+
+  Les opérations construisent une nouvelle liste de colonnes et reconstruisent les lignes en conséquence.
+
+Quelles évolutions peut-on envisager ?
+
+  Ajouter d’autres opérateurs (UNION, DIFFERENCE, RENAME, AGGREGATE).
+
+  Support de prédicats plus riches (AND/OR/NOT).
+
+  Optimisations de plans (poussée de sélection/projection, réordonnancement de JOIN).
+
+  Meilleure validation statique des plans avant exécution.
+
+  Support de types plus larges et gestion plus fine des valeurs manquantes.
 
 == Références
 * Quelques bibliothèques :
