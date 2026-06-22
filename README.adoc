@@ -22,7 +22,6 @@ The core architecture completely avoids imperative iteration loops, embracing **
 
 ## 📁 Repository Structure
 
-```text
 .
 ├── pom.xml                  # Maven automation configuration profile
 ├── src/
@@ -45,14 +44,17 @@ The core architecture completely avoids imperative iteration loops, embracing **
 
 ### 🛠️ Execution Requirements
 Ensure Java Development Kit (JDK) 17 and Maven are configured in your development ecosystem. Build the final standalone execution archive using the Maven wrapper:
+
 ./mvnw clean package
 
 ### 🚀 Running an Algebra Plan Execution (.json)
 To evaluate an algebraic tree plan from a structured JSON file and dump output tables into localized target directories, invoke the primary archive:
+
 java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.json
 
 ### 🔄 Compiling Script Configurations (.alg)
 To translate a domain-specific custom text configuration into a structural relational query JSON blueprint, pass the script parameter:
+
 java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.alg
 
 ---
@@ -77,3 +79,4 @@ Functional implementations create declarative execution schemas where operators 
 
 * Google Style Compliance: Verified automatically through checkstyle plugin parameters embedded within the Maven lifecycle.
 * Component Test Coverage: Fully tracked using structural analysis report summaries generated under: target/site/jacoco/index.html
+EOF
