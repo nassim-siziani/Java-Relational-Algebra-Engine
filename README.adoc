@@ -38,8 +38,8 @@ The core architecture completely avoids imperative iteration loops, embracing **
 │       ├── JsonQueryExecutor.java # Recursive abstract plan solver
 │       └── AlgTranslator.java     # Script compilation pipeline system
 └── target/site/jacoco/      # Automated structural test code-coverage logs
+```
 
-##
 ---
 
 ## 🔧 Getting Started & Usage Guide
@@ -47,30 +47,36 @@ The core architecture completely avoids imperative iteration loops, embracing **
 ### 🛠️ Execution Requirements
 Ensure Java Development Kit (JDK) 17 and Maven are configured in your development ecosystem. Build the final standalone execution archive using the Maven wrapper:
 
+```bash
 ./mvnw clean package
+```
 
 ### 🚀 Running an Algebra Plan Execution (.json)
 To evaluate an algebraic tree plan from a structured JSON file and dump output tables into localized target directories, invoke the primary archive:
 
+```bash
 java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.json
+```
 
 ### 🔄 Compiling Script Configurations (.alg)
 To translate a domain-specific custom text configuration into a structural relational query JSON blueprint, pass the script parameter:
 
+```bash
 java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.alg
+```
 
 ---
 
 ## 📊 Technical Architecture & Design Q&A
 
 ### Which frameworks were selected and why?
-* Google Gson: Fast serialization and dynamic construction of recursive plan nodes from variable input streams.
-* JUnit 5: Decoupled unit testing assertion hooks verifying relational boundaries.
-* JaCoCo: Automatic test-coverage inspection monitoring mutation branch quality metrics.
+* **Google Gson**: Fast serialization and dynamic construction of recursive plan nodes from variable input streams.
+* **JUnit 5**: Decoupled unit testing assertion hooks verifying relational boundaries.
+* **JaCoCo**: Automatic test-coverage inspection monitoring mutation branch quality metrics.
 
 ### Why is JSON highly appropriate for representing execution trees?
-* Positives: Highly standardized, readable formatting that naturally matches the hierarchical nested structure of relational query execution steps.
-* Negatives: High structural verbosity for manual authoring, semantic structural integrity validation can only be achieved at application execution time.
+* **Positives**: Highly standardized, readable formatting that naturally matches the hierarchical nested structure of relational query execution steps.
+* **Negatives**: High structural verbosity for manual authoring, semantic structural integrity validation can only be achieved at application execution time.
 
 ### What are the benefits of functional over imperative approaches here?
 Functional implementations create declarative execution schemas where operators are entirely composable. Relational operations behave as pure mathematical expressions transforming an immutable dataset into a new isolated database table result, significantly mitigating state side-effects.
@@ -79,6 +85,5 @@ Functional implementations create declarative execution schemas where operators 
 
 ## 📈 Quality Metrics & Standards
 
-* Google Style Compliance: Verified automatically through checkstyle plugin parameters embedded within the Maven lifecycle.
-* Component Test Coverage: Fully tracked using structural analysis report summaries generated under: target/site/jacoco/index.html
-EOF
+* **Google Style Compliance**: Verified automatically through checkstyle plugin parameters embedded within the Maven lifecycle.
+* **Component Test Coverage**: Fully tracked using structural analysis report summaries generated under: `target/site/jacoco/index.html`
