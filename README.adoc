@@ -22,6 +22,7 @@ The core architecture completely avoids imperative iteration loops, embracing **
 
 ## 📁 Repository Structure
 
+```text
 .
 ├── pom.xml                  # Maven automation configuration profile
 ├── src/
