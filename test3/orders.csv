@@ -1,6 +1,0 @@
-order_id,user_id,amount,status
-10,1,100,paid
-11,1,50,cancelled
-12,2,40,paid
-13,4,25,paid
-14,3,70,paid

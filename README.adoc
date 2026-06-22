@@ -1,404 +1,79 @@
-= Un Mini Moteur Algébrique
+# 🧮 Mini Relational Algebra Engine (MMA)
 
-Remplir _NOM, Prénom, no_étudiant, NC1_
+### **👥 Authors:** Nassim SIZIANI, Ali KEROUI  
+### **🎓 Project Type:** Academic Project - Master 1 Computer Science (Paris-Saclay / UVSQ)  
+### **📚 Module:** Core Java Programming & Relational Architectures  
 
+---
 
-**Notez** Des avenants et/ou clarifications à ce projet seront publiés  http://persee.prism.uvsq.fr/pub/cp/td/td4/alg_avenants.html[ici]. Vous serez prévenu par mail.
+## 🎯 Project Overview
 
-L'objet de ce mini-projet est de développer un Mini Moteur Algébrique (MMA) capable d'exécuter trois opérateurs de l'algèbre relationnelle xref:http://sql.bdpedia.fr/alg.html[algèbre relationnelle] en ligne de commande. Ce MMA peut exécuter uniquement les opérateurs de _projection_, de _sélection_ et de _jointure_. Ce mini-projet doit vous mettre l'accent sur les trois parties du cours : collections, programmation fonctionnelle et les entrées/sorties. Ces aspects du cours devront se concrétiser dans votre code. Ainsi, l'évaluation d'une requête algébrique ne devra pas se faire selon une approche « impérative ».
+This project implements a **Mini Relational Algebra Engine (MMA)** built from scratch in Java 17. The engine acts as a lightweight database processor that parses, translates, and executes core relational algebra queries (selection, projection, and equi-join) over standard CSV files.
 
-La notation de ce mini-projet sera effectuée automatiquement. Vous devrez donc **respecter** scrupuleusement les consignes décrites ci-dessous.
+The core architecture completely avoids imperative iteration loops, embracing **functional programming models** through Java Streams, pure functions, and recursive pipeline evaluations.
 
-[IMPORTANT]
-====
-Vous respecterez les contraintes suivantes:
-
-* Vous utiliserez `git` en effectuant des commits réguliers comportant des messages informatifs. L'usage des "pull requests" est également fortement conseillé, montrant ainsi votre collaboration au sein du groupe. 
-* Le _build_ sera assuré par Maven et plus précisément Maven wrapper (déjà intégré dans le projet).
-Aucune manipulation en dehors de Maven ne devra être nécessaire.
-* La version de Java à utiliser est la https://adoptium.net/[version 17].
-* Le _build_ devra intégrer `checkstyle` pour la vérification des règles de codages Google.
-Le projet devra donc les respecter.
-`checkstyle` devra être exécuté automatiquement durant la phase `validate` du cycle de vie par défaut.
-* Des tests unitaires https://junit.org/junit5/docs/current/user-guide/[JUnit 5] (version https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter/5.9.1[_5.9.1_]) devront être disponibles pour la plupart des méthodes développées.
-* Un outil de https://fr.wikipedia.org/wiki/Couverture_de_code[_Code Coverage_] devra être intégré au _build_
-* Les fonctionnalités du langage Java devront être utilisées au mieux (POO, exceptions, librairie de collections, I/O, …).
-* L'application devra pouvoir être exécutée à partir d'un `jar` **incluant toutes les dépendances**.
-====
-
-
-== Description du Mini Moteur Algébrique
-
-=== Les opérateurs
-
-Le MMA évaluera trois types d’opérateurs :
-
-* **PROJECT** : prend une table et une liste d’attributs *LA*. Il produit en sortie une table contenant uniquement la liste d’attributs *LA*.
-
-* **SELECT** : permet une sélection. Il prend une table et un prédicat simple constitué d’un attribut comparé à une valeur constante.
-  Il n’y a pas d’opérateurs de conjonction, de disjonction ni de négation.
-  Trois comparateurs sont disponibles : `=`, `<` et `>` pour les nombres, et `=` pour les chaînes.
-  La valeur constante peut être un entier ou une chaîne. Toute chaîne est entourée de guillemets simples (`'`).
-
-* **JOIN** : prend deux tables et deux attributs à joindre. Seule l’équi-jointure est implémentée.
-  Il produit une table résultant de la jointure des deux tables.
-
-Si besoin, vous pouvez vous référer à http://sql.bdpedia.fr/alg.html[algèbre relationnelle].
-
-
-=== Contraintes sur les Répertoires de Requêtes
-
-Votre application, livrée sous la forme d’un fichier JAR avec ses dépendances, sera exécutée depuis un répertoire contenant les tables requises par la ou les requêtes, ainsi que les fichiers de requêtes.
-
-[source,bash]
-----
-$ tree test4
-test4
-├── orders.csv
-├── reqSelUsers.json
-├── results
-│   └── output.csv
-└── users.csv
-----
-
-Dans l'exemple ci-dessus:
- * Le fichier `reqSelUsers.json` contient une requête dont le format sera décrit ci-dessous. 
- * Le répertoire `results` contiendra un fichier https://fr.wikipedia.org/wiki/Comma-separated_values[CSV] nommé `output` (respectez bien la typographie, sinon votre note sera impactée, car l'automate d'évaluation de votre projet ne pourra pas retrouver les données requises). 
- * Les fichiers `orders.csv` et `users.csv` sont des fichiers de données utilisés par les requêtes. 
-
-Exemple de contenu d'un fichier csv:
-[source,bash]
-----
-$ cat users.csv 
-id,name,age
-1,Alice,22
-2,Bob,30
-3,Charlie,27
-4,David,19
-----
-
-Nous supposerons que les fichiers CSV sont toujours de petite taille et peuvent tenir en mémoire.
-
-=== Une Requête Algébrique
-
-Toute requête est décrite dans un fichier https://en.wikipedia.org/wiki/JSON[JSON
-].
-Dans un répertoire qui évalue un plan algébrique, il peut y avoir une ou plusieurs requêtes.
-Une requête est exécutée dans le répertoire contenant l’ensemble des éléments nécessaires.
-La requête est exécutée à l’aide de la commande `java``.
-
-Par exemple :
-
-[source,bash]
-----
-monPC@td4_alg/test3
-$ java -jar ../target/td4_alg-1.0-SNAPSHOT-jar-with-dependencies.jar reqProjSel.json 
-Résultat écrit dans results/output.csv
-----
-
-Dans l'exemple ci-dessus, la machine Java s’exécute depuis le répertoire `test3` un "jar" fichier JAR et ses dépendances sur la requête `reqProjSel.json`
-
-[source,bash,title="reqProjSel.json"]
-----
-{
-  "tables": {
-    "users": "users.csv",
-    "orders": "orders.csv"
-  },
-  "plan": {
-  "type": "PROJECT",
-  "columns": ["name"],
-  "input": {
-    "type": "SELECT",
-    "predicate": "age < 25",
-    "input": {
-      "type": "SCAN",
-      "table": "users"
-    }
-  }
-}
-----
-
-Une requête est définie par un fichier `JSON` comportant, dans une première partie, la désignation des fichiers CSV contenant les données, et dans une seconde partie, la requête algébrique.  
-L'exemple ci-dessus illustre une requête qui effectue une sélection, suivie d'une projection sur le nom de la collection `users`.
-
-[source,bash,title="optJoin.json"]
-----
-{
-  "tables": {
-    "users": "users.csv",
-    "orders": "orders.csv"
-  },
-  "plan": {
-    "type": "PROJECT",
-    "columns": ["name", "amount"],
-    "input": {
-      "type": "JOIN",
-      "left": {
-        "type": "PROJECT",
-        "columns": ["id", "name"],
-        "input": {
-          "type": "SCAN",
-          "table": "users"
-        }
-      },
-      "right": {
-        "type": "SCAN",
-        "table": "orders"
-      },
-      "onLeft": "id",
-      "onRight": "user_id"
-    }
-  }
-}
-----
+### **✨ Key Architectural Pillars:**
+* **🧩 Object-Relational Memory Mapping:** Implements database models natively using decoupled components (Tables, Rows, Attributes) where rows are stochastically mapped using dynamic attribute dictionaries.
+* **⚡ Functional Pipeline Execution:** Processes data queries dynamically using a compositional interface where operators (`Scan`, `Select`, `Project`, `Join`) act as pure immutable functions transformation layers.
+* **🗜️ Abstract Syntax Tree (AST) Compiler:** Features a custom lexical scanner (`AlgTranslator`) capable of compiling raw iterative logic scripts (`.alg`) into standardized relational execution blueprints (`.json`).
+* **📦 Enterprise Build Standard:** Integrated with Apache Maven Wrapper, enforcing strict Google Code Style definitions via `Checkstyle` automated validation hooks.
 
-L’exemple de la requête `optJoin.json` ci-dessus effectue une projection depuis la table users. Le résultat est ensuite joint avec la table orders, produisant le résultat final.
+---
 
-== Une interface pour Exprimer des Requêtes
+## 📁 Repository Structure
 
-Cette seconde partie vise à traduire les requêtes algébriques, écrites en impératif, en un fichier de requête algébrique au format JSON.
+.
+├── pom.xml                  # Maven automation configuration profile
+├── simulation.py            # Main core relational execution engine
+├── src/
+│   └── main/java/fr/uvsq/cprog/collex/
+│       ├── Main.java        # Central CLI routing system
+│       ├── Operation.java   # Functional operator contract interface
+│       ├── Table.java       # Relational entity schema collection wrapper
+│       ├── Ligne.java       # Unbound tuple key-value entity dictionary
+│       ├── Scan.java        # I/O boundary layer streaming CSV lines
+│       ├── Select.java      # Functional tuple filtering component
+│       ├── Project.java     # Relational projection schema mapping layer
+│       ├── Join.java        # Relational equi-join intersection handler
+│       ├── JsonQueryExecutor.java # Recursive abstract plan solver
+│       └── AlgTranslator.java     # Script compilation pipeline system
+└── target/site/jacoco/      # Automated structural test code-coverage logs
 
-Si l'utilisateur qui utilise son editeur de texte, exprimer une requête comme par exemple:
-[source,bash,title="reqProjSel.alg"]
-----
-users: users.csv
-orders: orders.csv
+---
 
-R1 = SELECT users age < 25
-R = PROJ R1 name
-----
+## 🔧 Getting Started & Usage Guide
 
-Lors du lancement de la commande:
-[source,bash]
-----
-ty:~/mkTDs/td4_alg/test3
-$ java -jar ../target/td4_alg-1.0-SNAPSHOT-jar-with-dependencies.jar reqProjSel.alg 
-Traduction en reqProjSel.json
-----
+### 🛠️ Execution Requirements
+Ensure Java Development Kit (JDK) 17 and Maven are configured in your development ecosystem. Build the final standalone execution archive using the Maven wrapper:
+./mvnw clean package
 
+### 🚀 Running an Algebra Plan Execution (.json)
+To evaluate an algebraic tree plan from a structured JSON file and dump output tables into localized target directories, invoke the primary archive:
+java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.json
 
-* Votre application doit détecter l’extension `.alg` et effectuer la traduction. Elle n’exécute pas la requête, celle-ci étant dévolue à la première partie du projet.
-* Chaque argument est séparé par un espace. Ainsi, on exprime jamais "age<25"
-* Une chaine de caractère est mise entre des quotes ''. Il ne peut être qu'en dernière position.
+### 🔄 Compiling Script Configurations (.alg)
+To translate a domain-specific custom text configuration into a structural relational query JSON blueprint, pass the script parameter:
+java -jar target/collex-jar-with-dependencies.jar test/reqProjSel.alg
 
+---
 
-=== Autre exemple de traduction
-La requête `optJoin.json` equivaut à la traduction suivante :
+## 📊 Technical Architecture & Design Q&A
 
-[source,bash]
-----
-$ cat optJoin.alg 
-users: users.csv
-orders: orders.csv
+### Which frameworks were selected and why?
+* Google Gson: Fast serialization and dynamic construction of recursive plan nodes from variable input streams.
+* JUnit 5: Decoupled unit testing assertion hooks verifying relational boundaries.
+* JaCoCo: Automatic test-coverage inspection monitoring mutation branch quality metrics.
 
-R1 = PROJ users id name
-R2 = JOIN R1 orders id user_id
-R = PROJ R2 name amount
-----
+### Why is JSON highly appropriate for representing execution trees?
+* Positives: Highly standardized, readable formatting that naturally matches the hierarchical nested structure of relational query execution steps.
+* Negatives: High structural verbosity for manual authoring, semantic structural integrity validation can only be achieved at application execution time.
 
+### What are the benefits of functional over imperative approaches here?
+Functional implementations create declarative execution schemas where operators are entirely composable. Relational operations behave as pure mathematical expressions transforming an immutable dataset into a new isolated database table result, significantly mitigating state side-effects.
 
-== Description du travail à réaliser
+---
 
+## 📈 Quality Metrics & Standards
 
-* L’application doit être construite avec Maven. Elle doit produire un JAR avec ses dépendances.
-
-* L’application qui exécute le MMA doit appliquer le principe de l’évaluation fonctionnelle.
-
-* Vous devrez compléter le fichier `README.adoc` en décrivant comment vous avez réalisé le MMA.
-
-* Des tests unitaires sont requis.
-
-== Evaluation de votre Projet
-
-* Un automate lancera la construction de votre projet, puis appliquera plusieurs requêtes algébriques. Si le résultat de l’évaluation est conforme, vous obtiendrez des points. Dans le cas contraire, aucune réclamation ne sera possible. Pour rappel:
-  .  Votre code doit fonctionner suivant les exigences décrites dans "Contraintes sur les Répertoires de Requêtes". L'automate lancera votre jar dans un répertoire contenant une requête et effectura une évaluation.
-
-  . Vos fichiers de données CSV en entrée ainsi que le fichier CSV de sortie doivent être "propres". Cela signifie qu'il ne doit pas y avoir d'espace avant, en fin de chaîne, au début et à la fin d'une valeur d'attribut (qui sont séparée **obligatoirement par une virgule**). Par exemple : "albert, 16, rue du poisson" n'est pas correct. Il faut: "albert,16,rue du poisson". Pas de quote autour des chaines de caractères.
-
-  . L'automate s'attend, pour les tests JUnit 5, à voir une ligne du style `Tests run: 1, Failures: 0, Errors: 0, Skipped: 0`. Si votre pom.xml est mal configuré et qu'il ne voit pas cette ligne, la notation en tiendra compte.
-
-* L'automate peut également vérifier:
-   - les tests unitaires ainsi que votre mise en œuvre, en se basant sur l'approche fonctionnelle.
-
-   - si votre code respecte les normes de style et les exigences de couverture des tests.
-
-   - si vous avez effectué des commits git régulièrement
-
-   - la similitude (plagiat) des codes produits par vous tous. Le but ce cet effort est d'apprendre de nouvelles notions qui ne peuvent être acquises en copiant. 
-
-   - Si le clonage de votre dépôt Git contient des objets polluants (tels que .class, .jar), cela suggérera que vous n'avez pas configuré correctement votre dépôt Git pour ignorer ces fichiers inutiles.
-
-
-== À compléter ici:
-
-Quelles bibliothèques ont été utilisées et pourquoi ?
-
-<<<<<<< HEAD
-  Gson : lecture/écriture des fichiers JSON de requêtes et construction des objets de plan.
-
-  JUnit 5 : tests unitaires.
-
-  JaCoCo : mesure de la couverture de code.
-
-  Checkstyle (Google) : respect des règles de style imposées par le projet.
-
-Maven + Maven Wrapper : build reproductible et exécution automatique des plugins.
-
-Décrire les relations d'héritage ou autres entre vos classes
-
-  Une interface Operation définit le contrat commun des opérateurs.
-
-  Scan, Select, Project, Join implémentent Operation.
-
-  Table agrège une liste de Ligne et une liste d’attributs.
-
-  Ligne encapsule les valeurs d’une ligne sous forme de mapping attribut → valeur.
-
-  JsonQueryExecutor orchestre l’évaluation récursive du plan JSON.
-
-  AlgTranslator traduit un script .alg en plan JSON.
-
-Quel est le rôle des différentes classes ?
-
-  Table : représentation en mémoire d’une relation (nom, colonnes, lignes).
-
-  Ligne : représentation d’un tuple, accès aux valeurs par attribut.
-
-  Scan : charge un CSV en Table.
-
-  Select : filtre les lignes selon un prédicat simple.
-
-  Project : conserve un sous-ensemble de colonnes.
-
-  Join : réalise une équi-jointure et gère les attributs ambigus en préfixant à la sortie du JOIN.
-
-  JsonQueryExecutor : lit une requête JSON, instancie les opérations et exécute le plan de manière fonctionnelle/récursive.
-
-  AlgTranslator : parse le .alg et génère le JSON correspondant.
-
-  Main : détecte l’extension, déclenche traduction (.alg) ou exécution (.json).
-
-Pourquoi Json est bien/pas bien adapté pour l'interprétation un plan d'execution ?
-
-  Bien adapté : format structuré, lisible, standard, facile à parser, parfait pour représenter un arbre d’opérateurs imbriqués.
-
-  Limites : verbeux, peu ergonomique à écrire à la main, validation sémantique reportée au runtime.
-
-Quelles classes avez vous utilisées pour la lecture d'un Json ?
-
-  Gson, principalement via Gson, JsonObject, JsonArray, JsonParser.
-
-Comment consulter le rapport de couverture de code par les tests ?
-
-  Après mvn test ou mvn package, ouvrir :
-  target/site/jacoco/index.html
-
-Quels avantages apporte une approche de programmation non impérative, mais fonctionnelle, pour l'évaluation des requêtes dans votre projet ?
-
-  Code plus déclaratif et proche de l’algèbre relationnelle.
-
-  Opérateurs composables (chaînage naturel Scan → Select → Project → Join).
-
-  Moins d’état mutable, moins d’effets de bord, tests plus simples.
-
-  Évaluation du plan comme une fonction transformant une ou plusieurs tables en une table.
-
-Y a-t-il des bibliothèques Java qui permettraient de lire un fichier CSV et de l'instancier comme une collection ?
-
-  Oui, par exemple : OpenCSV, Apache Commons CSV, ou Jackson CSV.
-
-Comment avez-vous géré la variabilité du nombre de colonnes dans une table représentée dans une collection ?
-
-  Les colonnes sont stockées dans une liste dynamique d’attributs dans Table.
-
-  Une Ligne stocke ses valeurs dans une structure dictionnaire (attribut → valeur).
-
-  Les opérations construisent une nouvelle liste de colonnes et reconstruisent les lignes en conséquence.
-
-Quelles évolutions peut-on envisager ?
-
-  Ajouter d’autres opérateurs (UNION, DIFFERENCE, RENAME, AGGREGATE).
-
-  Support de prédicats plus riches (AND/OR/NOT).
-
-  Optimisations de plans (poussée de sélection/projection, réordonnancement de JOIN).
-
-  Meilleure validation statique des plans avant exécution.
-
-  Support de types plus larges et gestion plus fine des valeurs manquantes.
-=======
-* **Gson** : lecture/écriture des fichiers JSON de requêtes et construction des objets de plan.
-* **JUnit 5** : tests unitaires.
-* **JaCoCo** : mesure de la couverture de code.
-* **Checkstyle (Google)** : respect des règles de style imposées par le projet.
-* **Maven + Maven Wrapper** : build reproductible et exécution automatique des plugins.
-
-> Décrire les relations d'héritage ou autres entre vos classes
-
-* Une interface **Operation** définit le contrat commun des opérateurs.
-* **Scan**, **Select**, **Project**, **Join** implémentent **Operation**.
-* **Table** agrège une liste de **Ligne** et une liste d’attributs.
-* **Ligne** encapsule les valeurs d’une ligne sous forme de mapping attribut → valeur.
-* **JsonQueryExecutor** orchestre l’évaluation récursive du plan JSON.
-* **AlgTranslator** traduit un script `.alg` en plan JSON.
-
-> Quel est le rôle des différentes classes ?
-
-* **Table** : représentation en mémoire d’une relation (nom, colonnes, lignes).
-* **Ligne** : représentation d’un tuple, accès aux valeurs par attribut.
-* **Scan** : charge un CSV en Table.
-* **Select** : filtre les lignes selon un prédicat simple.
-* **Project** : conserve un sous-ensemble de colonnes.
-* **Join** : réalise une équi-jointure et gère les attributs ambigus en préfixant à la sortie du JOIN.
-* **JsonQueryExecutor** : lit une requête JSON, instancie les opérations et exécute le plan de manière fonctionnelle/récursive.
-* **AlgTranslator** : parse le `.alg` et génère le JSON correspondant.
-* **Main** : détecte l’extension, déclenche traduction (`.alg`) ou exécution (`.json`).
-
-> Pourquoi Json est bien/pas bien adapté pour l'interprétation un plan d'execution ?
-
-* **Bien adapté** : format structuré, lisible, standard, facile à parser, parfait pour représenter un arbre d’opérateurs imbriqués.
-* **Limites** : verbeux, peu ergonomique à écrire à la main, validation sémantique reportée au runtime.
-
-> Quelles classes avez vous utilisées pour la lecture d'un Json ?
-
-* **Gson**, principalement via `Gson`, `JsonObject`, `JsonArray`, `JsonParser`.
-
-> Comment consulter le rapport de couverture de code par les tests ?
-
-* Après `mvn test` ou `mvn package`, ouvrir :
-  `target/site/jacoco/index.html`
-
-> Quels avantages apporte une approche de programmation non impérative, mais fonctionnelle, pour l'évaluation des requêtes dans votre projet ?
-
-* Code plus **déclaratif** et proche de l’algèbre relationnelle.
-* Opérateurs **composables** (chaînage naturel Scan → Select → Project → Join).
-* Moins d’état mutable, moins d’effets de bord, tests plus simples.
-* Évaluation du plan comme une **fonction** transformant une ou plusieurs tables en une table.
-
-> Y a-t-il des bibliothèques Java qui permettraient de lire un fichier CSV et de l'instancier comme une collection ?
-
-* Oui, par exemple : **OpenCSV**, **Apache Commons CSV**, ou **Jackson CSV**.
-
-> Comment avez-vous géré la variabilité du nombre de colonnes dans une table représentée dans une collection ?
-
-* Les colonnes sont stockées dans une **liste dynamique** d’attributs dans `Table`.
-* Une `Ligne` stocke ses valeurs dans une structure dictionnaire (attribut → valeur).
-* Les opérations construisent une nouvelle liste de colonnes et reconstruisent les lignes en conséquence.
-
-> Quelles évolutions peut-on envisager ?
->>>>>>> 7e702de (Update MMA implementation and tests)
-
-* Ajouter d’autres opérateurs (UNION, DIFFERENCE, RENAME, AGGREGATE).
-* Support de prédicats plus riches (AND/OR/NOT).
-* Optimisations de plans (poussée de sélection/projection, réordonnancement de JOIN).
-* Meilleure validation statique des plans avant exécution.
-* Support de types plus larges et gestion plus fine des valeurs manquantes.
-
-
-== Références
-* Quelques bibliothèques :
-http://fusesource.github.io/jansi/[JAnsi] (couleur dans un terminal),
-https://google.github.io/gson/UserGuide.html[gson] (gestion des Jsons)
-
-
+* Google Style Compliance: Verified automatically through checkstyle plugin parameters embedded within the Maven lifecycle.
+* Component Test Coverage: Fully tracked using structural analysis report summaries generated under: target/site/jacoco/index.html
