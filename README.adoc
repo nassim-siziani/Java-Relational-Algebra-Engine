@@ -38,7 +38,8 @@ The core architecture completely avoids imperative iteration loops, embracing **
 │       ├── JsonQueryExecutor.java # Recursive abstract plan solver
 │       └── AlgTranslator.java     # Script compilation pipeline system
 └── target/site/jacoco/      # Automated structural test code-coverage logs
----
+
+##
 ---
 
 ## 🔧 Getting Started & Usage Guide
