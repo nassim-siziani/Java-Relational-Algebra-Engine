@@ -1,6 +1,6 @@
 # 🧮 Mini Relational Algebra Engine (MMA)
 
-### **👥 Authors:** Nassim SIZIANI, Ali KEROUI  
+### **👥 Authors:** Nassim SIZIANI 
 ### **🎓 Project Type:** Academic Project - Master 1 Computer Science (Paris-Saclay / UVSQ)  
 ### **📚 Module:** Core Java Programming & Relational Architectures  
 
