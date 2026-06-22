@@ -1,6 +1,6 @@
 # 🧮 Mini Relational Algebra Engine (MMA)
 
-### **👥 Authors:** Nassim SIZIANI 
+### **👥 Author:** Nassim SIZIANI  
 ### **🎓 Project Type:** Academic Project - Master 1 Computer Science (Paris-Saclay / UVSQ)  
 ### **📚 Module:** Core Java Programming & Relational Architectures  
 
@@ -14,9 +14,9 @@ The core architecture completely avoids imperative iteration loops, embracing **
 
 ### **✨ Key Architectural Pillars:**
 * **🧩 Object-Relational Memory Mapping:** Implements database models natively using decoupled components (Tables, Rows, Attributes) where rows are stochastically mapped using dynamic attribute dictionaries.
-* **⚡ Functional Pipeline Execution:** Processes data queries dynamically using a compositional interface where operators (`Scan`, `Select`, `Project`, `Join`) act as pure immutable functions transformation layers.
-* **🗜️ Abstract Syntax Tree (AST) Compiler:** Features a custom lexical scanner (`AlgTranslator`) capable of compiling raw iterative logic scripts (`.alg`) into standardized relational execution blueprints (`.json`).
-* **📦 Enterprise Build Standard:** Integrated with Apache Maven Wrapper, enforcing strict Google Code Style definitions via `Checkstyle` automated validation hooks.
+* **⚡ Functional Pipeline Execution:** Processes data queries dynamically using a compositional interface where operators (Scan, Select, Project, Join) act as pure immutable functions transformation layers.
+* **🗜️ Abstract Syntax Tree (AST) Compiler:** Features a custom lexical scanner (AlgTranslator) capable of compiling raw iterative logic scripts (.alg) into standardized relational execution blueprints (.json).
+* **📦 Enterprise Build Standard:** Integrated with Apache Maven Wrapper, enforcing strict Google Code Style definitions via Checkstyle automated validation hooks.
 
 ---
 
@@ -24,7 +24,6 @@ The core architecture completely avoids imperative iteration loops, embracing **
 
 .
 ├── pom.xml                  # Maven automation configuration profile
-├── simulation.py            # Main core relational execution engine
 ├── src/
 │   └── main/java/fr/uvsq/cprog/collex/
 │       ├── Main.java        # Central CLI routing system
